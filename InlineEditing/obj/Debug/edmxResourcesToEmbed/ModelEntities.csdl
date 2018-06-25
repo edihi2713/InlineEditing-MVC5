@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Meucci3Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Dominios">
+    <Key>
+      <PropertyRef Name="domDominioId" />
+    </Key>
+    <Property Name="domDominioId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="domDescripcion" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="domObservacion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="domAnulado" Type="Boolean" Nullable="false" />
+    <Property Name="domFechaCreacion" Type="DateTime" Precision="3" />
+    <Property Name="empEmpleadoIdCreador" Type="Int32" />
+    <Property Name="domFechaDesde" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="domFechaHasta" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityContainer Name="Meucci3Entities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Dominios" EntityType="Self.Dominios" />
+  </EntityContainer>
+</Schema>

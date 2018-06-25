@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="Meucci3ModelStoreContainer" CdmEntityContainer="Meucci3Entities">
+    <EntitySetMapping Name="Dominios">
+      <EntityTypeMapping TypeName="Meucci3Model.Dominios">
+        <MappingFragment StoreEntitySet="Dominios">
+          <ScalarProperty Name="domDominioId" ColumnName="domDominioId" />
+          <ScalarProperty Name="domDescripcion" ColumnName="domDescripcion" />
+          <ScalarProperty Name="domObservacion" ColumnName="domObservacion" />
+          <ScalarProperty Name="domAnulado" ColumnName="domAnulado" />
+          <ScalarProperty Name="domFechaCreacion" ColumnName="domFechaCreacion" />
+          <ScalarProperty Name="empEmpleadoIdCreador" ColumnName="empEmpleadoIdCreador" />
+          <ScalarProperty Name="domFechaDesde" ColumnName="domFechaDesde" />
+          <ScalarProperty Name="domFechaHasta" ColumnName="domFechaHasta" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

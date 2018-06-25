@@ -1,0 +1,231 @@
+﻿@model IEnumerable<InlineEditing.Dominios>
+
+
+
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link href="@Url.Content("~/Content/bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Scripts/bootstrap.js")" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div class="container">  
+    <table id ="tblDominios" class="table text-center">
+        <tr>
+           
+            <th style="width:150px;text-align:center">Descripción</th>
+            <th style="width:150px;text-align:center">Anulado</th>
+            <th style="text-align:center">Opciones</th>
+        </tr>
+        <tr>
+   
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            
+        </tr>
+
+        @foreach (Dominios dominio in Model)
+        {
+            <tr>
+                <td class="dominioId" style="display:none">
+                    <span>@dominio.domDominioId</span>
+                </td>
+                <td class="Dominio">
+                    <span>@dominio.domDescripcion</span>
+                    <input type="text" value="@dominio.domDescripcion" style="display:none"/>
+                </td>
+                <td class="Activo">
+                    @{var dominioprueba = @dominio.domAnulado? "SI": "NO";}
+                    <span> @dominioprueba </span>
+                    <input type="checkbox" value="@dominio.domAnulado" checked="@dominio.domAnulado" style="display:none"/>
+                </td>
+                <td>
+                    <a class="Edit" href="javascript:;">Edit</a>
+                    <a class="Update" href="javascript:;" style="display:none">Update</a>
+                    <a class="Cancel" href="javascript:;" style="display:none">Cancel</a>
+                    <a class="Delete" href="javascript:;">Delete</a>
+                </td>
+            </tr>
+        }
+
+    </table>
+
+     <table border="0" style="text-align:center">
+        <tr>
+            <td style="width: 150px">
+                Descripción Dominio<br/>
+                <input type="text" id="txtDominio"  class="form-control" style="width:140px"/>
+            </td>
+            <td style="width: 150px">
+                <span>¿Activo?:</span><br/>
+                <input type="checkbox" id="chkActivo" class="form-control" style="width:140px"/>
+            </td>
+            <td style="width: 200px">
+                <br/>
+                <input class="btn btn-success" type="button" id="btnAdd" value="Agregar Dominio"/>
+            </td>
+        </tr>
+    </table>
+     </div>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+
+    <script type="text/javascript">
+
+        $(function () {
+            if ($("#tblDominios tr").length > 2) {
+                $("#tblDominios tr:eq(1)").remove();
+            }
+        });
+
+
+        function appendRow(row, dominioId, dominio, activo) {
+
+  
+            $(".dominioId", row).find("span").html(dominioId);
+
+
+    
+            $(".Dominio", row).find("span").html(dominio);
+            $(".Dominio", row).find("input").val(dominio);
+
+
+            var mostrar = activo ? "SI" : "NO";
+            alert(mostrar);
+            $(".Activo", row).find("span").html(mostrar);
+            $(".Activo", row).find("input:checkbox:first").attr("checked", activo);
+
+            $("#tblDominios").append(row);
+        };
+
+        //Add event handler.
+        $("body").on("click", "#btnAdd", function () {
+
+            alert("prueba");
+            debugger;
+            var valorCheck = $('#chkActivo').is(":checked");
+            var txtDominio = $("#txtDominio");
+            var txtActivo = $("#chkActivo");
+            $.ajax({
+                type: "POST",
+                url: "/Home/insertDominio",
+                data: '{domDescripcion: "' + txtDominio.val() + '", domAnulado: "' + valorCheck + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (r) {
+                    debugger;
+                    var row = $("#tblDominios tr:last-child").clone(true);
+                    appendRow(row, r.domDominioId, r.domDescripcion, r.domAnulado);
+
+                    txtDominio.val("");
+                    txtActivo.attr("checked", false);
+           
+                }
+            });
+        });
+
+        $("body").on("click", "#tblDominios .Edit", function () {
+            var row = $(this).closest("tr");
+            $("td", row).each(function () {
+                if ($(this).find("input").length > 0) {
+                    $(this).find("input").show();
+                    $(this).find("span").hide();
+                }
+            });
+            row.find(".Update").show();
+            row.find(".Cancel").show();
+            row.find(".Delete").hide();
+            $(this).hide();
+        });
+
+
+        $("body").on("click", "#tblDominios .Cancel", function () {
+            var row = $(this).closest("tr");
+            $("td", row).each(function () {
+                if ($(this).find("input").length > 0) {
+                    var span = $(this).find("span");
+                    var input = $(this).find("input");
+                    input.val(span.html());
+                    span.show();
+                    input.hide();
+         
+                }
+            });
+            row.find(".Edit").show();
+            row.find(".Delete").show();
+            row.find(".Update").hide();
+            $(this).hide();
+        });
+
+
+        $("body").on("click", "#tblDominios .Delete", function () {
+            if (confirm("¿Está seguro de eliminar este dominio?")) {
+                var row = $(this).closest("tr");
+                var dominioId = row.find("span").html();
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/DeleteDominio",
+                    data: '{dominioId: ' + dominioId + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        row.remove();
+                    }
+                });
+            }
+        });
+
+        $("body").on("click", "#tblDominios .Update", function () {
+            var row = $(this).closest("tr");
+            $("td", row).each(function () {
+                if ($(this).find("input").length > 0) {
+
+                    var span = $(this).find("span");
+                    var input = $(this).find("input");
+
+                    if ($(this).find("input:checkbox").length > 0) {
+                        span.html($(this).find("input:checkbox").is(":checked") ? 'SI' : 'NO');
+                        
+                    } else {
+                
+                        span.html(input.val());
+                    }
+                    
+                    span.show();
+                    input.hide();
+                } 
+            });
+            row.find(".Edit").show();
+            row.find(".Delete").show();
+            row.find(".Cancel").hide();
+            $(this).hide();
+            
+        
+            var dominio = {};
+            dominio.domDominioId = row.find(".dominioId").find("span").html();
+            dominio.domDescripcion = row.find(".Dominio").find("span").html();
+            dominio.domAnulado = row.find(".Activo").find("span").html() == 'SI'? true : false;
+            $.ajax({
+                type: "POST",
+                url: "/Home/UpdateDominio",
+                data: '{dominio:' + JSON.stringify(dominio) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            });
+        });
+
+
+
+    </script>
+
+</body>
+</html>
